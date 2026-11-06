@@ -1,0 +1,622 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>
+<title>Thư viện bài tập</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Be+Vietnam+Pro:wght@400;500;600&display=swap">
+<style>
+/* Layout: sticky filter bar over a responsive grid of exercise cards; each card = 2-pose SVG + text */
+:root{
+  --bg:#F1F4F2; --card:#FFFFFF; --ink:#14201C; --muted:#5A6B65; --line:#D9E1DD;
+  --accent:#0C7A66; --accent-ink:#FFFFFF; --hot:#E5533D; --prop:#8A9A94; --chip:#E4EBE7;
+  --f-head:'Barlow Condensed','Arial Narrow',sans-serif; --f-body:'Be Vietnam Pro',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1613; --card:#17211D; --ink:#E8F0EC; --muted:#93A59D; --line:#2A3832;
+  --accent:#3CC4A8; --accent-ink:#06130F; --hot:#FF7A63; --prop:#6F8179; --chip:#22302A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1613; --card:#17211D; --ink:#E8F0EC; --muted:#93A59D; --line:#2A3832;
+  --accent:#3CC4A8; --accent-ink:#06130F; --hot:#FF7A63; --prop:#6F8179; --chip:#22302A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+.wrap{max-width:1180px;margin:0 auto}
+header{padding-block:28px 14px}
+h1{font-family:var(--f-head);font-weight:700;font-size:clamp(34px,6vw,52px);line-height:1;margin:0 0 8px;letter-spacing:.01em;text-wrap:balance}
+header p{margin:0;color:var(--muted);max-width:60ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.chip{font-family:var(--f-head);font-weight:600;font-size:17px;letter-spacing:.04em;text-transform:uppercase;
+  border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 14px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip small{font-family:var(--f-body);font-size:11px;opacity:.75;margin-left:4px;letter-spacing:0}
+.sp{flex:1}
+@media (max-width:520px){.chip{font-size:15px;padding:3px 10px}.bar{gap:6px}.sp{display:none}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:16px;padding-block:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.top{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}
+.top h2{font-family:var(--f-head);font-weight:700;font-size:23px;line-height:1.1;margin:0}
+.top .en{color:var(--muted);font-size:12px}
+.tags{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end}
+.tag{font-size:11px;background:var(--chip);color:var(--muted);border-radius:4px;padding:1px 7px;white-space:nowrap}
+.tag.home{background:var(--accent);color:var(--accent-ink)}
+.stage{position:relative;border-radius:8px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.stage svg{display:block;width:100%;height:auto}
+[hidden]{display:none!important}
+.stage.isvid{background:#F1F4F2;border-color:#D9E1DD}
+.vid{display:block;width:100%;max-width:440px;margin:0 auto;aspect-ratio:210/170;background:#F1F4F2}
+.fig{fill:none;stroke:var(--ink);stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round}
+.fig.far{opacity:.38}
+.hd{fill:var(--card);stroke:var(--ink);stroke-width:4.5}
+.ghost{opacity:.16}
+.prop{fill:none;stroke:var(--prop);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.propf{fill:var(--prop);stroke:none}
+.fl{stroke:var(--line);stroke-width:2;stroke-dasharray:4 5}
+.tgt{fill:var(--hot);opacity:.5}
+.arw{fill:none;stroke:var(--hot);stroke-width:2.5;stroke-dasharray:5 4;stroke-linecap:round}
+.lbl{font-family:var(--f-head);font-weight:700;font-size:13px;fill:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.play{font:500 13px var(--f-body);color:var(--accent);background:transparent;border:1.5px solid var(--accent);border-radius:6px;padding:5px 12px;cursor:pointer}
+.play[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.card p{margin:0;max-width:62ch}
+.pick{align-self:flex-start;font:500 13px var(--f-body);color:var(--ink);background:transparent;border:1.5px solid var(--line);border-radius:6px;padding:5px 12px;cursor:pointer}
+.pick:hover{border-color:var(--accent)}
+.card.on .pick{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tray{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tray[hidden]{display:none}
+.tray b{font-family:var(--f-head);font-size:20px}
+.tray .names{flex:1;min-width:140px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn{font:600 13px var(--f-body);border-radius:6px;padding:7px 14px;border:1.5px solid var(--accent);cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost2{background:transparent;color:var(--ink);border-color:var(--line)}
+.sel{position:absolute;opacity:0;pointer-events:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+<div class="wrap">
+  <header>
+    <h1>Thư viện bài tập cho nữ</h1>
+    <p><span id="n">61</span> bài chia theo lưng, mông, chân, ngực. Mỗi bài có một video người thật hướng dẫn trên TikTok (kèm link YouTube dự phòng), bấm vào khung để xem. Bấm Chọn để gom các bài bạn muốn tập. Nút Xem hình minh hoạ cho thấy tư thế bắt đầu và kết thúc, vùng cơ chính tô đỏ.</p>
+  </header>
+  <div class="bar" id="bar"></div>
+  <main class="grid" id="grid"></main>
+</div>
+<div class="tray" id="tray" hidden>
+  <b id="cnt">0</b><span>bài đã chọn</span>
+  <span class="names" id="names"></span>
+  <button class="btn" id="copy" type="button">Sao chép danh sách</button>
+  <button class="btn ghost2" id="clr" type="button">Bỏ chọn hết</button>
+</div>
+<style>
+.stage.yt{position:relative;aspect-ratio:16/9;background:#14201C;border-color:var(--line)}
+.stage.yt.alt{aspect-ratio:auto;background:var(--bg)}
+.vslot{position:absolute;inset:0}
+.stage.alt .vslot{display:none}
+.vslot iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.ytb{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#14201C;color:#E8F0EC;overflow:hidden}
+.ytb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.ytb .cap{position:absolute;left:0;right:0;bottom:12px;text-align:center;font:600 13px var(--f-body);opacity:.7}
+.ytb .pl{position:absolute;left:50%;top:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;background:rgba(0,0,0,.62);border:2px solid rgba(255,255,255,.85)}
+.ytb .pl::after{content:"";position:absolute;left:25px;top:18px;border-left:19px solid #fff;border-top:12px solid transparent;border-bottom:12px solid transparent}
+.ytb:hover .pl{background:var(--accent)}
+.vt{font-size:12px;color:var(--muted);line-height:1.4}
+.vt a{color:var(--accent);text-underline-offset:2px}
+</style>
+<style>
+.ytb.ttb{background:linear-gradient(160deg,#101a17,#1d2b26 60%,#0C7A66);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.ttb .ttk{position:absolute;left:14px;top:12px;font:700 22px var(--f-head);letter-spacing:.06em;text-transform:uppercase;color:#fff}
+.ttb .ttu{position:absolute;right:14px;top:16px;font:500 12px var(--f-body);opacity:.75}
+.stage.yt.tall{aspect-ratio:auto}
+.stage.tall .vslot{position:relative;inset:auto;display:flex;justify-content:center;padding:10px 0}
+.stage.tall .vslot iframe{position:static;width:100%;max-width:340px;height:620px}
+</style>
+<script>
+const EX=[];
+const X=(g,n,en,eq,home,tg,mv,b,s,e,pr,d)=>EX.push({g,n,en,eq,home,tg,mv,b,s,e,pr,d});
+/* ===== LƯNG ===== */
+X('lung','Kéo xà trên máy','Lat pulldown','Máy',0,'lats','W',
+ {ax:108,th:88,sh:-2,t:-8},{ua:160,fa:165},{t:-22,ua:-15,fa:170},[['bench',50,100,127],['cable',90,8,'W']],
+ 'Ngồi thẳng lưng, kéo thanh xuống ngang xương đòn, ép bả vai lại và đưa khuỷu tay xuống sát hông. Không ngả người ra sau để lấy đà.');
+X('lung','Hít xà (có máy trợ lực)','Pull-up / Assisted pull-up','Xà đơn',0,'lats','S',
+ {an:'h',ax:110,wy:26},{ua:180,fa:180,th:-20,sh:-70,ft:20},{ua:15,fa:165,th:-20,sh:-70,ft:20},[['pbar',110,26]],
+ 'Treo người trên xà, kéo cằm qua xà bằng lưng chứ không chỉ bằng tay. Máy trợ lực hoặc dây kháng lực giúp giảm bớt trọng lượng cơ thể nếu chưa kéo nổi.');
+X('lung','Kéo cáp ngồi','Seated cable row','Cáp',0,'lats','W',
+ {ax:150,th:70,sh:60,ft:80},{t:14,ua:90,fa:90},{t:-12,ua:-40,fa:100},[['bench',62,108,128],['ln',158,128,158,150],['cable',205,100,'W']],
+ 'Ngồi, kéo tay cầm cáp về bụng dưới. Ngực mở, siết bả vai ở cuối động tác và trả về chậm, không gù lưng.');
+X('lung','Kéo tạ đơn một tay','Dumbbell one-arm row','Tạ tay',1,'lats','W',
+ {ax:95,th:30,sh:-8,t:80,ft:80,fArm:0},{ua:0,fa:0},{ua:-110,fa:-5},[['bench',150,195,100],['sup',152,96],['db']],
+ 'Một tay chống lên ghế, lưng song song sàn. Kéo tạ về phía hông, khuỷu tay sát thân người, không xoay vai.');
+X('lung','Kéo tạ đòn cúi người','Bent-over row','Tạ đòn',0,'lats','W',
+ {ax:100,th:35,sh:-5,t:68,ft:80},{ua:5,fa:0},{ua:-105,fa:-15},[['bar']],
+ 'Cúi người gần song song sàn, lưng phẳng, kéo tạ đòn hoặc tạ tay về bụng. Siết bả vai rồi hạ tạ có kiểm soát.');
+X('lung','Kéo tạ tựa ngực vào ghế','Chest-supported row','Tạ tay / máy',0,'uback','W',
+ {ax:95,th:20,sh:-5,t:40,ft:80},{ua:25,fa:15},{ua:-105,fa:-15},[['ln',94,95,118,67],['ln',96,95,108,150],['db']],
+ 'Tựa ngực vào ghế nghiêng rồi kéo tạ. Ghế đỡ ngực nên lưng dưới ít chịu lực và dễ giữ form hơn rất nhiều.');
+X('lung','Duỗi thẳng tay kéo cáp','Straight-arm pulldown','Cáp',0,'lats','W',
+ {ax:105,th:8,sh:0,t:20},{ua:150,fa:155},{ua:10,fa:10},[['cable',138,6,'W']],
+ 'Đứng trước cáp trên cao, tay thẳng, kéo thanh từ trên xuống đùi. Cô lập cơ xô, không dùng tay để kéo.');
+X('lung','Kéo cáp về mặt','Face pull','Cáp / dây',0,'uback','W',
+ {ax:105},{ua:90,fa:90},{ua:-90,fa:70},[['cable',190,50,'W']],
+ 'Kéo dây về phía mặt, khuỷu tay mở cao. Tập vai sau và lưng trên, giúp cải thiện tư thế gù vai.');
+X('lung','Dang tay ngược','Reverse fly','Tạ tay',1,'uback','W',
+ {ax:100,th:35,sh:-5,t:70,ft:80},{ua:5,fa:0},{ua:-70,fa:-75},[['db']],
+ 'Cúi người, hai tay cầm tạ nhẹ dang ra hai bên như cánh. Hình chỉ vẽ nhìn từ cạnh nên tay chuyển lên cao. Tập vai sau và bả vai.');
+X('lung','Kéo dây kháng lực','Band row / pull-apart','Dây kháng lực',1,'uback','W',
+ {ax:105},{ua:85,fa:85},{ua:-45,fa:95},[['band',195,56,'W']],
+ 'Móc dây kháng lực phía trước, kéo về ngực hoặc kéo giãn sang hai bên. Hợp cho người mới và để khởi động.');
+X('lung','Kéo ngược dưới thanh','Inverted row','Xà thấp / bàn chắc',1,'uback','S',
+ {an:'h',ax:130,wy:78,line:1},{ua:180,fa:180},{ua:-30,fa:175},[['pbar',130,78,1]],
+ 'Nằm dưới thanh xà thấp hoặc mép bàn chắc, thân người thẳng, kéo ngực lên chạm thanh rồi hạ chậm.');
+X('lung','Nằm sấp nâng thân','Back extension','Ghế La Mã',0,'lback','S',
+ {an:'f',hx:105,hy:104,th:-88,sh:-88,ua:20,fa:140},{t:150},{t:88},[['ln',72,114,114,114],['ln',92,114,92,150],['ln',46,96,46,124]],
+ 'Nằm sấp trên ghế La Mã, hạ thân trên xuống rồi nâng lên đến khi thẳng người. Không ưỡn quá mức ở đỉnh. Tập lưng dưới và mông.');
+X('lung','Superman','Superman','Tự trọng',1,'lback','W',
+ {an:'f',hx:105,hy:141,fArm:0},{t:88,th:-90,sh:-90,ua:90,fa:90},{t:75,th:-105,sh:-110,ua:110,fa:110},[],
+ 'Nằm sấp, nâng đồng thời tay và chân khỏi sàn, giữ 1-2 giây rồi hạ xuống. Bài nhẹ cho lưng dưới, làm được ở nhà.');
+X('lung','Cúi người gập hông','Good morning','Tạ đòn',0,'lback','S',
+ {ax:105,ua:-30,fa:170},{t:0,th:0,sh:0},{t:68,th:32,sh:-3},[['bar','S']],
+ 'Đặt tạ đòn sau vai hoặc ôm trước ngực, đẩy hông ra sau và cúi người, lưng phẳng. Tập lưng dưới và đùi sau.');
+X('lung','Deadlift','Deadlift','Tạ đòn',0,'lback','W',
+ {ax:105,ft:80},{t:72,th:70,sh:-15,ua:0,fa:0},{t:0,th:0,sh:0,ua:0,fa:0},[['bar']],
+ 'Nhấc tạ đòn từ sàn lên bằng lực của chân, hông và lưng, giữ lưng phẳng. Bài nặng toàn thân nên học kỹ thuật với tạ nhẹ trước.');
+/* ===== MÔNG ===== */
+X('mong','Hip thrust','Hip thrust','Tạ đòn / tạ tay',0,'glute','H',
+ {ax:118,lie:1,ly:106,ua:75,fa:60,ft:80},{sh:-25,th:121},{sh:0,th:72},[['bench',40,100,114],['bar','H']],
+ 'Lưng trên tựa ghế, tạ đặt ngang hông. Đẩy hông lên đến khi thân người thẳng, siết mông 1-2 giây ở đỉnh rồi hạ chậm. Cằm hơi cúi, không ưỡn lưng. Đây là bài hiệu quả nhất cho mông.');
+X('mong','Glute bridge','Glute bridge','Tự trọng',1,'glute','H',
+ {ax:118,lie:1,ly:144,ua:90,fa:90,ft:80},{th:130,sh:-37},{th:105,sh:0},[],
+ 'Nằm ngửa, co gối, bàn chân đặt sát sàn rồi đẩy hông lên. Giống hip thrust nhưng nhẹ hơn, hợp để làm quen và khởi động.');
+X('mong','Cầu mông một chân','Single-leg bridge','Tự trọng',1,'glute','H',
+ {ax:118,lie:1,ly:144,ua:90,fa:90,ft:80,fth:130,fsh:130},{th:130,sh:-37},{th:105,sh:0},[],
+ 'Như glute bridge nhưng duỗi thẳng một chân lên cao, chỉ chân còn lại phát lực. Mông phải làm việc nhiều hơn và hai bên đều nhau hơn.');
+X('mong','Romanian deadlift','Romanian deadlift (RDL)','Tạ đòn / tạ tay',0,'glute','H',
+ {ax:105,ua:0,fa:0,ft:80},{t:0,th:0,sh:0},{t:70,th:35,sh:-5,ua:-12,fa:-12},[['bar']],
+ 'Đẩy hông ra sau và hạ tạ dọc theo đùi, lưng phẳng, gối chỉ hơi chùng. Dừng khi thấy căng mông và đùi sau, rồi siết mông để đứng lên.');
+X('mong','RDL một chân','Single-leg RDL','Tạ tay',1,'glute','H',
+ {ax:105,ua:0,fa:0,fth:-5,fsh:-10},{t:0,th:0,sh:0},{t:85,th:10,sh:0,fth:-100,fsh:-100},[['db']],
+ 'Đứng một chân, cúi người ra trước trong khi chân kia duỗi thẳng ra sau như cán cân. Vừa tập mông vừa luyện thăng bằng.');
+X('mong','Bulgarian split squat','Bulgarian split squat','Tạ tay / tự trọng',1,'glute','H',
+ {ax:125,t:18,ua:0,fa:0,fth:-45},{th:25,sh:-5,fsh:-96},{th:70,sh:-12,fsh:-141},[['bench',30,72,114],['db']],
+ 'Chân sau gác lên ghế, hạ người xuống bằng chân trước. Nghiêng thân người nhẹ về trước để dồn lực vào mông thay vì đùi trước.');
+X('mong','Squat chân rộng','Sumo squat','Tạ tay',1,'glute','H',
+ {ax:105,ua:15,fa:5},{t:0,th:0,sh:0},{t:15,th:95,sh:-22},[['db']],
+ 'Đứng chân rộng hơn vai, mũi chân mở ra ngoài, ôm một quả tạ ở giữa. Hạ người thẳng xuống, gối đẩy theo hướng mũi chân. Tập mông và đùi trong.');
+X('mong','Lunge chéo chân','Curtsy lunge','Tự trọng / tạ tay',1,'glute','H',
+ {ax:125,ua:60,fa:130,fth:-5,fsh:-5},{t:0,th:0,sh:0},{t:8,th:85,sh:-5,fth:-32,fsh:-85},[],
+ 'Bước một chân chéo ra sau như cúi chào, hạ gối sau gần chạm sàn rồi đứng lên. Tập mông ngoài và mông giữa. Hình vẽ từ cạnh nên không thấy hướng bước chéo.');
+X('mong','Lunge lùi','Reverse lunge','Tự trọng / tạ tay',1,'glute','H',
+ {ax:125,ua:0,fa:0,fth:-5,fsh:-5},{t:0,th:0,sh:0},{t:8,th:85,sh:-5,fth:-32,fsh:-85},[['db']],
+ 'Bước lùi một chân rồi hạ xuống, đứng lên bằng chân trước. Dễ giữ thăng bằng và ít áp lực lên gối hơn lunge bước tới.');
+X('mong','Bước lên bục','Step-up','Tạ tay / tự trọng',1,'glute','H',
+ {ax:128,gy:122,ua:0,fa:0},{th:85,sh:-39,t:5,fth:20,fsh:-45},{th:0,sh:0,t:0,fth:15,fsh:-30},[['box',100,126,56,24],['db']],
+ 'Đặt cả bàn chân lên ghế hoặc bục cao, đạp gót để đứng thẳng người, rồi hạ xuống có kiểm soát. Chọn bục cao ngang gối.');
+X('mong','Đá chân ra sau với cáp','Cable kickback','Cáp',0,'glute','A2',
+ {ax:105,th:5,sh:0,t:25,ua:75,fa:75,fth:-5,fsh:-8},{},{fth:-60,fsh:-60},[['ln',162,40,162,146],['cable',190,142,'A2']],
+ 'Buộc dây cáp vào cổ chân, tay vịn vào máy. Đá chân ra sau và siết mông ở cuối động tác, không ưỡn lưng.');
+X('mong','Kéo cáp qua giữa hai chân','Cable pull-through','Cáp',0,'glute','H',
+ {ax:105},{t:65,th:35,sh:-5,ua:-30,fa:-30},{t:0,th:0,sh:0,ua:5,fa:5},[['cable',22,138,'W']],
+ 'Quay lưng vào cáp thấp, kéo dây qua giữa hai chân, đẩy hông ra trước đến khi đứng thẳng. Cảm giác mông rõ và nhẹ cho lưng dưới.');
+X('mong','Đá chân ra sau 4 điểm chống','Donkey kick','Tự trọng',1,'glute','A2',
+ {an:'k',ax:95,hand:1,ua:0,fa:0,th:0,sh:-90,fth:0,fsh:-90},{},{fth:-100,fsh:180},[],
+ 'Bò bằng bốn điểm chống, nâng một chân lên cao với gối gập 90 độ, lòng bàn chân hướng lên trần. Siết mông ở đỉnh, giữ hông không xoay.');
+X('mong','Nhấc gối sang ngang','Fire hydrant','Tự trọng',1,'glute','K2',
+ {an:'k',ax:95,hand:1,ua:0,fa:0,th:0,sh:-90,fth:0,fsh:-90},{},{fth:-95,fsh:-20},[],
+ 'Tư thế bốn điểm chống, nhấc gối sang ngang như chú chó đi vệ sinh. Tập mông ngoài. Hình vẽ từ cạnh nên chỉ thấy gối nhấc lên.');
+X('mong','Mở gối nằm nghiêng','Clamshell','Dây kháng lực',1,'glute','K2',
+ {an:'f',hx:105,hy:141,t:-88,th:100,sh:-60,ua:60,fa:60,fth:100,fsh:-60,fArm:0},{},{fth:132,fsh:-58},[['loop','K']],
+ 'Nằm nghiêng, hai gối co, mở gối trên ra như vỏ sò, nên kèm dây kháng lực quanh đùi. Tập mông ngoài và hay dùng để khởi động. Hình vẽ từ cạnh nên chỉ thấy gối nhấc lên.');
+X('mong','Đi ngang với dây kháng lực','Banded lateral walk','Dây kháng lực',1,'glute','H',
+ {ax:105,t:20,ua:40,fa:100},{th:30,sh:-14},{th:42,sh:-18},[['loop','K']],
+ 'Dây quanh đùi hoặc cổ chân, ở tư thế hơi squat rồi bước ngang từng bước nhỏ. Giữ gối không đổ vào trong. Hình chỉ minh hoạ tư thế thấp, bước đi theo chiều ngang.');
+X('mong','Máy dạng chân','Hip abduction machine','Máy',0,'glute','K',
+ {ax:120,th:88,sh:2,t:-10,ua:20,fa:70},{},{th:84,sh:-2},[['bench',55,100,128],['ln',129,104,129,126]],
+ 'Ngồi máy, đẩy hai đùi ra ngoài chống lại tạ. Giữ lưng tựa chắc, không nhún người lấy đà. Hình vẽ từ cạnh nên không thấy hai chân mở ra.');
+X('mong','Frog pump','Frog pump','Tự trọng',1,'glute','H',
+ {ax:110,lie:1,ly:144,ua:90,fa:90,ft:80},{th:130,sh:-37},{th:112,sh:-15},[],
+ 'Nằm ngửa, hai lòng bàn chân chạm nhau và gối mở ra, đẩy hông lên. Mông nóng rất nhanh nên hợp làm bài kết cho buổi mông.');
+/* ===== CHÂN ===== */
+X('chan','Squat tạ đòn','Back squat','Tạ đòn',0,'quad','H',
+ {ax:105,ua:-30,fa:170},{t:0,th:0,sh:0},{t:42,th:98,sh:-24},[['bar','S']],
+ 'Tạ đòn đặt trên vai sau, ngồi xuống đến khi đùi song song sàn rồi đứng lên. Gối đi theo hướng mũi chân, lưng giữ thẳng. Bài chính cho cả chân và mông.');
+X('chan','Goblet squat','Goblet squat','Tạ tay',1,'quad','H',
+ {ax:105,ua:20,fa:150},{t:0,th:0,sh:0},{t:22,th:98,sh:-24},[['db']],
+ 'Ôm một quả tạ trước ngực và squat sâu. Tạ trước ngực giúp bạn giữ lưng thẳng nên rất hợp với người mới.');
+X('chan','Squat tạ trước','Front squat','Tạ đòn',0,'quad','H',
+ {ax:105,ua:80,fa:150},{t:0,th:0,sh:0},{t:25,th:98,sh:-24},[['bar']],
+ 'Tạ đòn đặt trước vai, khuỷu tay nâng cao. Thân người dựng đứng hơn back squat nên đùi trước phải làm nhiều hơn.');
+X('chan','Đạp đùi trên máy','Leg press','Máy',0,'quad','A',
+ {an:'f',hx:70,hy:122,t:-45,ua:60,fa:90},{th:130,sh:70},{th:120,sh:120},[['bk'],['bench',48,95,134],['sled']],
+ 'Ngồi máy, đẩy bàn đạp bằng hai chân rồi gập về chậm. Đặt chân cao thì thiên về mông và đùi sau, đặt thấp thì thiên về đùi trước. Không khoá cứng gối ở trên cùng.');
+X('chan','Hack squat','Hack squat','Máy',0,'quad','H',
+ {ax:105},{t:-15,th:0,sh:0},{t:-18,th:100,sh:-25},[['bk']],
+ 'Squat trên máy trượt chéo, lưng tựa cố định vào đệm. Tập đùi trước rất rõ và ít áp lực lên lưng.');
+X('chan','Lunge bước tới','Walking lunge','Tạ tay / tự trọng',1,'quad','H',
+ {ax:125,ua:0,fa:0,fth:-5,fsh:-5},{t:0,th:0,sh:0},{t:8,th:85,sh:-5,fth:-32,fsh:-85},[['db']],
+ 'Bước tới liên tục, hạ gối sau gần chạm sàn rồi đẩy người đứng lên và bước tiếp. Tập đùi, mông và thăng bằng.');
+X('chan','Split squat','Split squat','Tạ tay / tự trọng',1,'quad','H',
+ {ax:125,t:6,ua:0,fa:0},{th:20,sh:-3,fth:-25,fsh:-25},{th:85,sh:-5,fth:-32,fsh:-85},[['db']],
+ 'Đứng một chân trước một chân sau, giữ nguyên khoảng cách và chỉ hạ người lên xuống, không bước. Dễ kiểm soát hơn lunge.');
+X('chan','Duỗi đùi trên máy','Leg extension','Máy',0,'quad','A',
+ {an:'f',hx:80,hy:118,t:-5,th:88,ua:50,fa:80},{sh:5},{sh:85},[['bk'],['bench',55,100,128]],
+ 'Ngồi máy, duỗi thẳng chân rồi hạ về chậm. Cô lập đùi trước. Chọn mức tạ vừa phải để không dồn lực vào khớp gối.');
+X('chan','Gập đùi sau','Leg curl','Máy',0,'ham','A',
+ {an:'f',hx:100,hy:126,t:88,th:-90,ua:100,fa:120},{sh:-90},{sh:-190},[['bench',45,150,134]],
+ 'Nằm sấp hoặc ngồi tuỳ máy, gập gối kéo bàn đạp về phía mông rồi hạ chậm. Tập đùi sau.');
+X('chan','Stiff-leg deadlift','Stiff-leg deadlift','Tạ tay / tạ đòn',1,'ham','H',
+ {ax:105,ua:0,fa:0,ft:80},{t:0,th:0,sh:0},{t:75,th:20,sh:-2,ua:-10,fa:-10},[['db']],
+ 'Gối gần như thẳng, hạ tạ dọc chân bằng cách gập hông. Đùi sau căng nhiều hơn RDL, nên hạ vừa tầm.');
+X('chan','Máy khép chân','Hip adductor machine','Máy',0,'inner','K',
+ {ax:120,th:88,sh:2,t:-10,ua:20,fa:70},{},{th:92,sh:2},[['bk'],['bench',55,100,128],['ln',129,104,129,126]],
+ 'Ngồi máy, khép hai đùi vào nhau chống lại tạ. Tập đùi trong. Hình vẽ từ cạnh nên không thấy hai chân khép lại.');
+X('chan','Nhón gót','Calf raise','Tạ tay / tự trọng',1,'calf','A',
+ {ax:105,ua:0,fa:0},{gy:146},{gy:137,ft:20},[['db']],
+ 'Nâng gót chân lên hết cỡ, dừng 1 giây rồi hạ chậm. Đứng tập bắp chuối, ngồi tập cơ dưới của bắp chân. Đặt mũi chân lên bậc thấp để tăng tầm vận động.');
+X('chan','Squat bật nhảy','Jump squat','Tự trọng',1,'quad','H',
+ {ax:105,ua:-40,fa:-40},{t:35,th:98,sh:-24,ua:-50,fa:-40,gy:146},{t:0,th:5,sh:0,ua:150,fa:150,gy:120,ft:45},[],
+ 'Squat xuống rồi bật nhảy lên, tiếp đất nhẹ bằng mũi chân và lập tức vào squat tiếp. Thêm tính chất cardio, nên tránh nếu đang đau gối.');
+X('chan','Ngồi tựa tường','Wall sit','Tự trọng',1,'quad','H',
+ {ax:125,ua:40,fa:70},{ax:95,th:0,sh:0},{th:90,sh:0},[['wall',86]],
+ 'Tựa lưng vào tường, trượt xuống đến khi đùi song song sàn rồi giữ nguyên đến khi mỏi. Tập sức bền cho đùi.');
+/* ===== NGỰC ===== */
+X('nguc','Đẩy ngực tạ đòn','Barbell bench press','Tạ đòn',0,'chest','W',
+ {ax:140,lie:1,ly:122,th:100,sh:-5,ft:80},{ua:180,fa:180},{ua:60,fa:-175},[['bench',60,125,130],['bar']],
+ 'Nằm ghế phẳng, hạ tạ đòn xuống ngực rồi đẩy lên. Bả vai ép xuống ghế, bàn chân đặt chắc. Đây là bài nặng nhất của ngực nên cần người đỡ.');
+X('nguc','Đẩy ngực tạ tay','Dumbbell bench press','Tạ tay',1,'chest','W',
+ {ax:140,lie:1,ly:122,th:100,sh:-5,ft:80},{ua:180,fa:180},{ua:60,fa:-175},[['bench',60,125,130],['db']],
+ 'Giống bench press nhưng dùng tạ tay, biên độ rộng hơn và dễ chỉnh theo khớp vai. Hợp để tập ở nhà nếu có ghế.');
+X('nguc','Đẩy ngực trên ghế dốc lên','Incline dumbbell press','Tạ tay',1,'chest','W',
+ {ax:140,th:100,sh:-5,t:-50,ft:80},{ua:180,fa:180},{ua:60,fa:-170},[['bk'],['bench',95,125,132],['db']],
+ 'Ghế nghiêng 30-45 độ để tập ngực trên. Dùng góc vừa phải, nếu dốc quá lực sẽ dồn sang vai.');
+X('nguc','Đẩy ngực ghế dốc xuống','Decline press','Tạ đòn / tạ tay',0,'chest','W',
+ {ax:140,th:100,sh:-5,t:-115,ft:80},{ua:180,fa:180},{ua:55,fa:-175},[['bk'],['bench',95,125,132],['bar']],
+ 'Ghế dốc xuống, đầu thấp hơn hông. Thiên về ngực dưới. Cần người đỡ và nên dùng mức tạ vừa phải.');
+X('nguc','Đẩy ngực trên máy','Machine chest press','Máy',0,'chest','W',
+ {ax:130,th:88,sh:2,t:-6,ft:80},{ua:-30,fa:75},{ua:88,fa:90},[['bk'],['bench',60,108,128]],
+ 'Ngồi máy, đẩy tay cầm ra trước rồi trả về chậm. Dễ làm, an toàn và rất hợp với người mới.');
+X('nguc','Ép ngực tạ tay','Dumbbell fly','Tạ tay',1,'chest','W',
+ {ax:140,lie:1,ly:122,th:100,sh:-5,ft:80},{ua:70,fa:-160},{ua:180,fa:180},[['bench',60,125,130],['db']],
+ 'Nằm ghế, dang hai tay tạ rộng ra rồi khép lại như ôm một thân cây, khuỷu tay hơi chùng. Hình vẽ từ cạnh nên tay chỉ chuyển lên xuống.');
+X('nguc','Ép ngực với cáp','Cable fly','Cáp',0,'chest','W',
+ {ax:105,th:15,sh:-3,t:15,fth:-25,fsh:-25},{ua:-40,fa:-20},{ua:80,fa:75},[['cable',60,14,'W']],
+ 'Đứng giữa hai cáp, kéo hai tay vào nhau trước ngực. Cáp giữ lực căng suốt biên độ. Kéo từ cao xuống thấp tập ngực dưới, từ thấp lên cao tập ngực trên.');
+X('nguc','Ép ngực trên máy','Pec deck','Máy',0,'chest','W',
+ {ax:130,th:88,sh:2,t:-6,ft:80},{ua:-30,fa:70},{ua:80,fa:80},[['bk'],['bench',60,108,128]],
+ 'Ngồi máy, khép hai tay vào nhau trước ngực. Cô lập ngực và rất dễ làm.');
+X('nguc','Hít đất','Push-up','Tự trọng',1,'chest','S',
+ {an:'h',ax:140,wy:146,line:1,ft:10},{ua:0,fa:0},{ua:-95,fa:20},[],
+ 'Hai tay đặt rộng hơn vai một chút, thân người thẳng từ đầu đến gót. Hạ ngực gần chạm sàn rồi đẩy lên, không võng lưng.');
+X('nguc','Hít đất quỳ gối','Knee push-up','Tự trọng',1,'chest','S',
+ {an:'h',ax:140,wy:146,sh:-90,ua:0,fa:0},{t:55,th:-55},{t:77,th:-77,ua:-95,fa:20},[],
+ 'Hít đất với hai gối chạm sàn. Dùng khi chưa làm nổi hít đất chuẩn, vẫn giữ thân người thẳng từ đầu đến gối.');
+X('nguc','Hít đất tay đặt cao','Incline push-up','Ghế / bàn chắc',1,'chest','S',
+ {an:'h',ax:140,wy:110,line:1,ft:10},{ua:0,fa:0},{ua:-95,fa:20},[['box',112,110,56,40]],
+ 'Hai tay đặt trên ghế hoặc mặt bàn chắc, thân người nghiêng. Dễ hơn hít đất sàn. Tay đặt càng thấp thì bài càng khó và thiên về ngực dưới.');
+X('nguc','Dip ngực','Chest dips','Xà kép',0,'chest','S',
+ {an:'h',ax:105,wy:96,th:-20,sh:-70,ft:20},{t:15,ua:0,fa:0},{t:25,ua:-95,fa:20},[['ln',88,96,126,96],['ln',126,96,126,150]],
+ 'Chống tay trên hai thanh song song, nghiêng người về trước và hạ xuống rồi đẩy lên. Có máy trợ lực nếu chưa đủ sức.');
+X('nguc','Svend press','Svend press','Đĩa tạ / tạ tay',1,'chest','W',
+ {ax:105},{ua:20,fa:150},{ua:90,fa:90},[['db']],
+ 'Ép hai đĩa tạ hoặc hai quả tạ tay vào nhau trước ngực rồi đẩy ra trước, luôn ép chặt. Bài nhẹ để làm nóng ngực cuối buổi.');
+X('nguc','Pullover tạ tay','Dumbbell pullover','Tạ tay',1,'chest','W',
+ {ax:140,lie:1,ly:122,th:100,sh:-5,ft:80},{ua:180,fa:180},{ua:-80,fa:-80},[['bench',60,125,130],['db']],
+ 'Nằm ngang ghế, đưa một quả tạ từ trên đầu ra sau rồi kéo lại qua ngực, tay gần như thẳng. Tập ngực và cơ xô.');
+/* ---------- figure engine: side view, facing right; angles in degrees ----------
+   limb angles measured from "straight down", positive = toward the front (right) */
+const R=Math.PI/180, dr=a=>[Math.sin(a*R),Math.cos(a*R)], tv=a=>[Math.sin(a*R),-Math.cos(a*R)];
+const L={T:36,th:30,sh:29,ua:21,fa:19,ft:9};
+const DEF={an:'a',ax:105,gy:146,wy:146,t:0,th:0,sh:0,ua:0,fa:0,ft:90,hd:0,ly:144,lie:0,hand:0,line:0,hx:105,hy:100,fArm:1};
+const ad=(p,v,l)=>[p[0]+v[0]*l,p[1]+v[1]*l];
+const mid=(a,b,k=.5)=>[a[0]+(b[0]-a[0])*k,a[1]+(b[1]-a[1])*k];
+const cl=x=>Math.max(-1,Math.min(1,x));
+function solve(q){
+  const p=Object.assign({},DEF,q);let A,K,H,S,E,W,t=p.t;
+  const e=dr(p.ua),f=dr(p.fa),av=[e[0]*L.ua+f[0]*L.fa,e[1]*L.ua+f[1]*L.fa];
+  if(p.an==='h'){
+    W=[p.ax,p.wy];S=[W[0]-av[0],W[1]-av[1]];
+    if(p.line){const al=Math.asin(cl((p.gy-S[1])/95))/R;t=90-al;p.th=p.sh=-(90-al)}
+    H=ad(S,tv(t),-L.T);K=ad(H,dr(p.th),L.th);A=ad(K,dr(p.sh),L.sh);E=ad(S,e,L.ua);
+  }else{
+    if(p.an==='a'){A=[p.ax,p.gy];K=ad(A,dr(p.sh),-L.sh);H=ad(K,dr(p.th),-L.th)}
+    else if(p.an==='k'){K=[p.ax,p.gy-2];A=ad(K,dr(p.sh),L.sh);H=ad(K,dr(p.th),-L.th)}
+    else{H=[p.hx,p.hy];K=ad(H,dr(p.th),L.th);A=ad(K,dr(p.sh),L.sh)}
+    if(p.lie)t=-Math.acos(cl((H[1]-p.ly)/L.T))/R;
+    if(p.hand)t=Math.acos(cl((H[1]-(p.gy-av[1]))/L.T))/R;
+    S=ad(H,tv(t),L.T);E=ad(S,e,L.ua);W=ad(E,f,L.fa);
+  }
+  const r={S,E,W,H,K,A,F:ad(A,dr(p.ft),L.ft),C:ad(S,tv(t+p.hd),13),t,p};
+  if(p.fth!==undefined){r.K2=ad(H,dr(p.fth),L.th);r.A2=ad(r.K2,dr(p.fsh),L.sh);r.F2=ad(r.A2,dr(p.ft),L.ft)}
+  return r;
+}
+const pt=(a)=>a[0].toFixed(1)+' '+a[1].toFixed(1);
+const sh_=(a,d)=>[a[0]+d,a[1]];
+function target(P,k){
+  const {S,E,H,K,A,t,p}=P,tn=[Math.cos(t*R),Math.sin(t*R)],tf=dr(p.th),sf=dr(p.sh);
+  const thM=mid(H,K),pf=[tf[1],-tf[0]],cM=mid(K,A),cf=[sf[1],-sf[0]];
+  switch(k){
+    case'glute':return ad(H,[-1,0],3);
+    case'quad':return ad(thM,pf,4);
+    case'ham':return ad(thM,pf,-4);
+    case'inner':return thM;
+    case'calf':return ad(cM,cf,-4);
+    case'lats':return ad(mid(S,H,.4),tn,-5);
+    case'uback':return ad(mid(S,H,.18),tn,-5);
+    case'lback':return ad(mid(S,H,.8),tn,-5);
+    case'chest':return ad(mid(S,H,.22),tn,6);
+    case'delt':return S;
+    default:return H;
+  }
+}
+function propsSVG(list,P){
+  const J={S:P.S,E:P.E,W:P.W,H:P.H,K:P.K,A:P.A,F:P.F,K2:P.K2,A2:P.A2};let o='';
+  for(const q of list||[]){
+    const k=q[0];
+    if(k==='db'){const w=J[q[1]||'W'];o+=`<rect class="propf" x="${w[0]-6}" y="${w[1]-3.5}" width="12" height="7" rx="2"/>`}
+    else if(k==='bar'){const w=J[q[1]||'W'];o+=`<circle class="prop" cx="${w[0]}" cy="${w[1]}" r="11"/><circle class="propf" cx="${w[0]}" cy="${w[1]}" r="3"/>`}
+    else if(k==='cable'||k==='band'){const w=J[q[3]||'W'];o+=`<line class="prop" ${k==='band'?'stroke-dasharray="4 3"':''} x1="${q[1]}" y1="${q[2]}" x2="${w[0]}" y2="${w[1]}"/><circle class="propf" cx="${q[1]}" cy="${q[2]}" r="4"/>`}
+    else if(k==='bench'){o+=`<line class="prop" style="stroke-width:8" x1="${q[1]}" y1="${q[3]}" x2="${q[2]}" y2="${q[3]}"/><line class="prop" x1="${q[1]+5}" y1="${q[3]}" x2="${q[1]+5}" y2="150"/><line class="prop" x1="${q[2]-5}" y1="${q[3]}" x2="${q[2]-5}" y2="150"/>`}
+    else if(k==='box'){o+=`<rect class="prop" x="${q[1]}" y="${q[2]}" width="${q[3]}" height="${q[4]}" rx="3"/>`}
+    else if(k==='pbar'){const sd=q[3]===1?1:-1,px=q[1]+70*sd;o+=`<line class="prop" x1="${px}" y1="${q[2]}" x2="${q[1]-28*sd}" y2="${q[2]}"/><line class="prop" x1="${px}" y1="${q[2]}" x2="${px}" y2="150"/><circle class="propf" cx="${q[1]}" cy="${q[2]}" r="4"/>`}
+    else if(k==='ln'){o+=`<line class="prop" style="stroke-width:7" x1="${q[1]}" y1="${q[2]}" x2="${q[3]}" y2="${q[4]}"/>`}
+    else if(k==='sup'){o+=`<line class="fig" style="stroke-width:5;opacity:.5" x1="${P.S[0]}" y1="${P.S[1]}" x2="${q[1]}" y2="${q[2]}"/>`}
+    else if(k==='loop'){const w=J[q[1]||'K'];o+=`<ellipse class="prop" cx="${w[0]-2}" cy="${w[1]}" rx="3.5" ry="8"/>`}
+    else if(k==='bk'){const n=[Math.cos(P.t*R),Math.sin(P.t*R)],u=tv(P.t),a=ad(ad(P.H,n,-10),u,-6),b=ad(ad(P.S,n,-10),u,8);
+      o+=`<line class="prop" style="stroke-width:8" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`}
+    else if(k==='sled'){const v=dr(P.p.sh),n=[v[1],-v[0]],c=ad(P.A,v,6),a=ad(c,n,-17),b=ad(c,n,17);
+      o+=`<line class="prop" style="stroke-width:7" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`}
+    else if(k==='wall'){o+=`<line class="prop" style="stroke-width:6" x1="${q[1]}" y1="30" x2="${q[1]}" y2="150"/>`}
+  }
+  return o;
+}
+function figSVG(P,opt={}){
+  const {S,E,W,H,K,A,F,C,p}=P,d=-5;
+  const line=(pts,c)=>`<path class="fig ${c||''}" d="M${pts.map(pt).join(' L')}"/>`;
+  let o='';
+  if(opt.tgt)o+=`<circle class="tgt" cx="${target(P,opt.tgt)[0]}" cy="${target(P,opt.tgt)[1]}" r="11"/>`;
+  if(P.K2)o+=`<path class="fig" style="opacity:.7" d="M${[H,P.K2,P.A2,P.F2].map(pt).join(' L')}"/>`;
+  else o+=line([sh_(H,d),sh_(K,d),sh_(A,d),sh_(F,d)],'far');
+  if(p.fArm)o+=line([sh_(S,d),sh_(E,d),sh_(W,d)],'far');
+  o+=line([H,S]);o+=line([H,K,A,F]);
+  if(p.fArm||!opt.noArm)o+=line([S,E,W]);
+  o+=`<circle class="hd" cx="${C[0].toFixed(1)}" cy="${C[1].toFixed(1)}" r="7"/>`;
+  return o;
+}
+function arrowSVG(a,b){
+  const m=mid(a,b),dx=b[0]-a[0],dy=b[1]-a[1],n=Math.hypot(dx,dy)||1;
+  if(n<5)return'';
+  const c=[m[0]-dy/n*9,m[1]+dx/n*9],tx=b[0]-c[0],ty=b[1]-c[1],tl=Math.hypot(tx,ty)||1,ux=tx/tl,uy=ty/tl;
+  const h=(s)=>[b[0]-ux*8+(-uy)*s*4.5,b[1]-uy*8+ux*s*4.5];
+  return`<path class="arw" d="M${pt(a)} Q${pt(c)} ${pt(b)}"/><path class="arw" style="stroke-dasharray:none" d="M${pt(h(1))} L${pt(b)} L${pt(h(-1))}"/>`;
+}
+const pose=(ex,k)=>Object.assign({},DEF,ex.b,ex[k]);
+function panel(ex,P,gh){
+  let o=`<line class="fl" x1="8" y1="150" x2="202" y2="150"/>`+propsSVG(ex.pr,P);
+  if(gh){o+=`<g class="ghost">${figSVG(gh)}</g>`}
+  return o+figSVG(P,{tgt:ex.tg});
+}
+function cardSVG(ex){
+  const a=solve(pose(ex,'s')),b=solve(pose(ex,'e')),j=ex.mv||'W';
+  return`<svg viewBox="0 0 430 170" role="img" aria-label="${ex.n}: tư thế bắt đầu và kết thúc">
+  <g>${panel(ex,a)}<text class="lbl" x="10" y="18">1 Bắt đầu</text></g>
+  <g transform="translate(220 0)">${panel(ex,b,a)}${arrowSVG(a[j],b[j])}<text class="lbl" x="10" y="18">2 Kết thúc</text></g></svg>`;
+}
+function lerpP(a,b,u){const o={};for(const k in a)o[k]=(typeof a[k]==='number'&&typeof b[k]==='number')?a[k]+(b[k]-a[k])*u:a[k];return o}
+/* Video hướng dẫn trên YouTube, theo đúng thứ tự 61 bài: [mã video, tiêu đề gốc] */
+const YT=[
+['DkwKrtM8yZE','Hướng dẫn LAT PULL DOWN - kĩ thuật TẬP LƯNG cho người mới'],
+['1cnzTbPipVU','[Cách tập tại NHÀ] hít xà cho người không hít được - cách tập hít xà cho Nữ'],
+['rhuV3YDO0_Q','Hướng dẫn Kéo lưng hiệu quả với máy Seated Cable Rows'],
+['tWgeX6nxGNw','Tập xô bằng tạ đơn hiệu quả One Arm Dumbell Row - Thể Hình Channel'],
+['k4pqTvuBUDA','Cúi gập người KÉO LƯNG với Tạ Đòn (Barbell Bent-Over Row)'],
+['ro2vfHfD0DQ','How To Do A Chest Supported Dumbbell Row Correctly'],
+['mvgQs3CkgGQ','Straight Arm Pulldowns - Cable Lat Isolation Exercise'],
+['ezFOYuRo1Qc','Hướng dẫn FACE PULL - kĩ thuật TẬP VAI SAU cho người mới'],
+['29HYlz8iWag','How to do a Reverse Fly'],
+['pCEZ2_oMNH8','Standing Rows - Kéo Lưng Giữa Với Dây Kháng Lực - BUFFIT HomeWorkout'],
+['7hE1Cmvp3YA','Hướng dẫn INVERTED ROW - kĩ thuật TẬP LƯNG cho người mới'],
+['WXtA9bt4TZU','Hướng dẫn kỹ thuật tập lưng với máy Hyperextension'],
+['IJfpJ562k9Q','Bài tập Superman giúp giảm mỡ lưng dưới'],
+['86Qp0xK0tDY','Hướng dẫn GOOD MORNING - kĩ thuật TẬP LƯNG cho người mới'],
+['T26d9EeZcYw','Kỹ thuật DEADLIFT chuẩn cho người mới'],
+['-KN5zRSVLRs','Hướng Dẫn Hip Thrust Chuẩn Cho Nữ'],
+['7ubNxfWNiXw','Hướng Dẫn Chi Tiết Glute Bridge'],
+['ISaPvGHPI5s','Hướng dẫn tập chân mông - Glutes Bridge, Single Leg Bridge - Tập mông hiệu quả, không đau lưng'],
+['nE4-LcQ9px4','Hướng dẫn thực hiện Romanian Deadlift (RDL): target vào mông và đùi sau, không đau lưng'],
+['YO6AJuZDqoU','Kĩ thuật Single Leg DeadLift Hoàn Hảo - Bài Tập Tốt Nhất Cho Mông'],
+['5vxLiruDsYw','Bulgarian Split Squat - Bài tập phát triển vòng 3 không thể thiếu'],
+['hHWD9R1uwPc','Hướng dẫn SQUATS mông to, giảm mỡ đùi sau Sumo Squats'],
+['2EyH9MN7hYE','How To Do A Curtsy Lunge'],
+['-Nr6dqEvz3Q','How To Do A Reverse Lunge Correctly'],
+['jLeq1dG4Ufw','Hướng Dẫn: Step Up - Độ Mông Cực Đơn Giản'],
+['oOnghJeMgMk','Đá Mông Nhỡ Với Cable: Hướng Dẫn Cho Người Mới'],
+['WDckGHnHTUY','FST-7 Cable Pull Through - Cô lập bơm mông tối đa - Coach by Duy Nguyễn'],
+['H4pN32BNeHk','How to Do Donkey Kicks'],
+['kgCR2pHhbcI','Bài tập mông #6 Fire Hydrant Right cho vòng 3 săn chắc to tròn'],
+['gFyIjunfbbg','How to Do the Clamshell Exercise'],
+['-n6g5vS8MzA','The RIGHT WAY To Do Lateral Walking With A Band'],
+['KGAVChyrB8Y','Vòng 3 căng tròn, săn chắc với máy tập mông Hip Abduction'],
+['L0nEfiTMTBI','How To Do A Frog Pump Glute Bridge'],
+['NQptlDBxUTc','Hướng dẫn con gái Squats gánh tạ mông to, đùi thon'],
+['pwNc-9G_wk4','Dumbbell Goblet Squat'],
+['cikCd9TAwnk','Barbell Front Squat là gì? Hướng Dẫn Tập Đùi Trước - Thể Hình Vip'],
+['ShBkmIclij8','Hướng Dẫn: Leg Press - Mông To Cực Đơn Giản Với Máy Đạp Đùi'],
+['BF7J84W1joQ','Duy Nguyễn Hướng Dẫn Hack Squats Và Đạp Đùi Trên Máy Gym'],
+['3xMEXO-PUdU','Hướng dẫn LUNGE - kĩ thuật TẬP MÔNG ĐÙI cho người mới'],
+['hCRq06bYjdE','How To Do A Split Squat'],
+['aM8tnE3ykt8','BA Leg Extension - Hướng Dẫn Máy Gym Đá Nét Đùi'],
+['H7I-mSuT_i4','Hướng dẫn Leg Curl - To mông cắt nét săn chắc cơ đùi sau'],
+['yYB9e6ZWGTc','How to Do Stiff Leg Deadlift'],
+['fpVHoidfg60','How To Do The Seated Hip Adduction Machine'],
+['IddSR-71Dd4','Hướng dẫn bài tập bắp chân Standing Dumbbell Calf Raise'],
+['cEUnlq1CnBA','Jump Squat - Bài Tập Squat Cho Đùi'],
+['JaZNYM3zAP0','How To Do a Wall Sit'],
+['UMUk82txSBQ','Đẩy ngực đúng kỹ thuật thể hình bằng tạ đòn Bench Press'],
+['WQyillhbcT4','Hướng dẫn FLAT DUMBBELL PRESS - kĩ thuật TẬP NGỰC cho người mới'],
+['355JufJ2pe0','Hướng dẫn INCLINE DUMBBELL PRESS - kĩ thuật TẬP NGỰC TRÊN cho người mới'],
+['83hTVCnwjJY','Kỹ thuật đẩy ngực dưới khó nhất cần học Decline Press'],
+['fZrqRMJl104','Cách sử dụng máy đẩy ngực - Chest Press Machine'],
+['Nhvz9EzdJ4U','How To Do A Dumbbell Chest Fly'],
+['1Pmr7eu3UBI','Hướng dẫn CABLE FLY - kĩ thuật TẬP NGỰC VỚI CÁP cho người mới'],
+['HSeKIcNMkXM','Butterfly - Pec Fly Ép dầy khít ngực trong'],
+['ptdWBs7R9-I','Cách HÍT ĐẤT tiêu chuẩn cho người mới tập và các biến thể'],
+['aHzE5lmQeps','Kĩ thuật Knee Push Up cho người mới tập (Chống Đẩy quỳ gối)'],
+['-9S9gdRwwak','Incline Push ups (Exercise Library)'],
+['0mzzPyxPwzs','Dips Chest chống xà kép tập cơ ngực đúng kỹ thuật thể hình'],
+['cIoUZOnypS8','Svend Press'],
+['WB8vB_09G44','Hướng dẫn tập Ngực: Đưa tạ đôi qua đầu - Straight Arm Dumbbell Pullover']
+];
+/* Video TikTok theo thứ tự 61 bài: [tài khoản, mã video] */
+const TT=[
+['@stephaniebesna','7378245269474856197'],
+['@tonedwithtina','7314794101331873029'],
+['@fit.with.alena','7244225424161590571'],
+['@arielyu.fit','7353403580948303147'],
+['@brian_neyugn','7260899917617466629'],
+['@deltabolic','7673298491401047316'],
+['@marzrodie','7362609990907071752'],
+['@arielyu.fit','7489833513940815146'],
+['@quanbfit','7560119905316572471'],
+['@arielyu.fit','7432316049673997610'],
+['@theathletecoach','6972264667305495813'],
+['@squatuniversity','7534934936768367903'],
+['@brentlhill','7188201434305957166'],
+['@jc.martinez_','7248719966961192234'],
+['@red5performance','7214621221290380590'],
+['@jeremyethier','7343366085023911174'],
+['@haydensteelefit','7215247796167855402'],
+['@b00tybyjacks','7094579735296003330'],
+['@laci_renee','7194904032111037739'],
+['@emilyjeancote','7219262120821673259'],
+['@stephaniebesna','7332175881273724166'],
+['@arielyu.fit','7367883542631845166'],
+['@fitnessladycom','7260564811463806213'],
+['@fitnessdilekofficial','7399000559526628641'],
+['@bethcarlinofitness','7456705766192467218'],
+['@vera.armishaw','7646563528643513620'],
+['@quanbfit','7626531231072587021'],
+['@fit.with.alena','7499499169405521194'],
+['@she_trainz','7391555433015627039'],
+['@pipfitcoaching','7415931222641118497'],
+['@fit_with_tay','7356577784359111979'],
+['@jazz.fitness_','7397829782513274144'],
+['@xtinefit','7450173540071935237'],
+['@stephaniebesna','7333286056764148998'],
+['@red5performance','7195343313736715566'],
+['@marzrodie','7342860592836906258'],
+['@melmarrazzohall','7461088458958720261'],
+['@quanbfit','7472917705985641771'],
+['@deltabolic','7461425786134875398'],
+['@deltabolic','7447369573457857798'],
+['@melmarrazzohall','7432089537494469893'],
+['@mog.c4m','7644841593974820127'],
+['@zm_fitness3','7542524066893188384'],
+['@haydensteelefit','7216411324924890411'],
+['@vytasfitness','7213816765027978502'],
+['@coachingotf','7556312193155779895'],
+['@coach_hanadi_atwwa','7452744475035651346'],
+['@ericananglefit','7187147552402328838'],
+['@hurricane_gh1','7429390328139975967'],
+['@deltabolic','7616907152652782849'],
+['@d0nfit','7447297305188797739'],
+['@patrickhongfit','7231862294148336897'],
+['@quanbfit','7514474256311323946'],
+['@deltabolic','7554529864800374017'],
+['@petermiljak','7178283406499777797'],
+['@g_doherty2255','7611304662183972109'],
+['@stozfit','7488387424679251255'],
+['@gino.boom','7288247164281572613'],
+['@hurricane_gh1','7434612677109959967'],
+['@flexfitnessplainfieldct','7340696568099654954'],
+['@britanywilliams','7404609982798286111']
+];
+/* ---------- UI (YouTube) ---------- */
+const GROUPS=[['lung','Lưng'],['mong','Mông'],['chan','Chân'],['nguc','Ngực']];
+const $=s=>document.querySelector(s);
+EX.forEach((e,i)=>{e.id=i;e.yt=YT[i];e.tt=TT[i]});
+let flt='all',homeOnly=false,picked=new Set();
+try{picked=new Set(JSON.parse(localStorage.getItem('bt-picked')||'[]').filter(i=>EX[i]))}catch(_){}
+const save=()=>{try{localStorage.setItem('bt-picked',JSON.stringify([...picked]))}catch(_){}};
+const canEmbed=/^https?:$/.test(location.protocol);
+
+const ttUrl=e=>`https://www.tiktok.com/${e.tt[0]}/video/${e.tt[1]}`;
+const thumb=e=>e.tt
+ ?`<button class="ytb ttb" type="button" data-i="${e.id}" aria-label="Xem video TikTok: ${e.n}">
+  <span class="ttk">TikTok</span><span class="ttu">${e.tt[0]}</span><span class="pl"></span><span class="cap">${canEmbed?'Bấm để xem ngay trong trang':'Bấm để mở trên TikTok'}</span></button>`
+ :`<button class="ytb" type="button" data-i="${e.id}" aria-label="Phát video hướng dẫn ${e.n}">
+  <span class="cap">Video hướng dẫn</span><img src="https://i.ytimg.com/vi/${e.yt[0]}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()"><span class="pl"></span></button>`;
+
+function renderBar(){
+  const cnt=g=>EX.filter(e=>(g==='all'||e.g===g)&&(!homeOnly||e.home)).length;
+  $('#bar').innerHTML=[['all','Tất cả'],...GROUPS].map(([k,n])=>
+    `<button class="chip" type="button" data-g="${k}" aria-pressed="${flt===k}">${n}<small>${cnt(k)}</small></button>`).join('')+
+    `<span class="sp"></span><button class="chip" type="button" id="home" aria-pressed="${homeOnly}">Chỉ bài tại nhà</button>`;
+}
+function cardHTML(e){
+  const on=picked.has(e.id);
+  return`<article class="card${on?' on':''}" data-id="${e.id}">
+  <div class="top"><div><h2>${e.n}</h2><div class="en">${e.en}</div></div>
+  <div class="tags"><span class="tag">${e.eq}</span>${e.home?'<span class="tag home">Tại nhà</span>':''}</div></div>
+  <div class="stage yt"><div class="vslot">${thumb(e)}</div><div class="two" hidden>${cardSVG(e)}</div></div>
+  <div class="vt">${e.tt?`Video TikTok của ${e.tt[0]} · <a href="${ttUrl(e)}" target="_blank" rel="noopener">Mở trên TikTok</a> · `:''}<a href="https://www.youtube.com/watch?v=${e.yt[0]}" target="_blank" rel="noopener">${e.tt?'Bản YouTube dự phòng':'Mở trên YouTube'}</a></div>
+  <p>${e.d}</p>
+  <div class="acts"><button class="pick" type="button" aria-pressed="${on}">${on?'Đã chọn':'Chọn bài này'}</button>
+  <button class="play" type="button" aria-pressed="false">Xem hình minh hoạ</button></div></article>`;
+}
+function renderGrid(){
+  const list=EX.filter(e=>(flt==='all'||e.g===flt)&&(!homeOnly||e.home));
+  let h='';
+  if(flt==='all'){for(const [k] of GROUPS)h+=list.filter(e=>e.g===k).map(cardHTML).join('')}
+  else h=list.map(cardHTML).join('');
+  $('#grid').innerHTML=h||'<p>Không có bài nào khớp bộ lọc.</p>';
+}
+function renderTray(){
+  const n=picked.size;$('#tray').hidden=!n;$('#cnt').textContent=n;
+  $('#names').textContent=[...picked].map(i=>EX[i].n).join(', ');
+}
+function listText(){
+  return GROUPS.map(([k,n])=>{const l=[...picked].map(i=>EX[i]).filter(e=>e.g===k);
+    return l.length?n+':\n'+l.map(e=>'- '+e.n+' ('+e.en+'): https://www.youtube.com/watch?v='+e.yt[0]).join('\n'):''}).filter(Boolean).join('\n\n');
+}
+function playVideo(e,btn){
+  if(e.tt){
+    if(canEmbed){
+      btn.closest('.stage').classList.add('tall');
+      btn.parentNode.innerHTML=`<iframe src="https://www.tiktok.com/embed/v2/${e.tt[1]}" title="${e.n}" allow="encrypted-media; fullscreen" allowfullscreen loading="lazy"></iframe>`;
+    }else window.open(ttUrl(e),'_blank','noopener');
+    return;
+  }
+  if(canEmbed){
+    btn.parentNode.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${e.yt[0]}?autoplay=1&rel=0&playsinline=1" title="${e.n}"
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  }else{
+    window.open('https://www.youtube.com/watch?v='+e.yt[0],'_blank','noopener');
+  }
+}
+document.addEventListener('click',ev=>{
+  const t=ev.target.closest('button');if(!t)return;
+  const card=t.closest('.card');
+  if(t.dataset.g){flt=t.dataset.g;renderBar();renderGrid()}
+  else if(t.id==='home'){homeOnly=!homeOnly;renderBar();renderGrid()}
+  else if(t.classList.contains('ytb')){playVideo(EX[+t.dataset.i],t)}
+  else if(t.classList.contains('pick')){
+    const id=+card.dataset.id;picked.has(id)?picked.delete(id):picked.add(id);save();
+    card.classList.toggle('on',picked.has(id));t.setAttribute('aria-pressed',picked.has(id));
+    t.textContent=picked.has(id)?'Đã chọn':'Chọn bài này';renderTray()}
+  else if(t.classList.contains('play')){
+    const st=card.querySelector('.stage'),slot=st.querySelector('.vslot'),two=st.querySelector('.two'),e=EX[+card.dataset.id];
+    const on=t.getAttribute('aria-pressed')==='true';
+    t.setAttribute('aria-pressed',!on);t.textContent=on?'Xem hình minh hoạ':'Xem video';
+    two.hidden=on;st.classList.toggle('alt',!on);
+    if(on||slot.querySelector('iframe')){slot.innerHTML=thumb(e);st.classList.remove('tall')}
+  }
+  else if(t.id==='clr'){picked.clear();save();renderGrid();renderTray()}
+  else if(t.id==='copy'){
+    const txt=listText(),done=()=>{t.textContent='Đã sao chép';setTimeout(()=>t.textContent='Sao chép danh sách',1600)};
+    const fb=()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done()}catch(_){t.textContent='Hãy bôi đen và sao chép thủ công'}ta.remove()};
+    try{navigator.clipboard.writeText(txt).then(done,fb)}catch(_){fb()}
+  }
+});
+$('#n').textContent=EX.length;
+renderBar();renderGrid();renderTray();
+</script></body></html>
