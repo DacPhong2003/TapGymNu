@@ -81,7 +81,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
     <h1>Thư viện bài tập cho nữ</h1>
     <p><span id="n">61</span> bài chia theo lưng, mông, chân, ngực. Mỗi bài có một video người thật hướng dẫn trên TikTok (kèm link YouTube dự phòng), bấm vào khung để xem. Bấm Chọn để gom các bài bạn muốn tập. Nút Xem hình minh hoạ cho thấy tư thế bắt đầu và kết thúc, vùng cơ chính tô đỏ.</p>
   </header>
+  <div class="tabs" id="tabs"></div>
   <div class="bar" id="bar"></div>
+  <section id="plan" hidden></section>
   <main class="grid" id="grid"></main>
 </div>
 <div class="tray" id="tray" hidden>
@@ -116,6 +118,36 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .stage.tall .vslot iframe{position:static;width:100%;max-width:340px;height:620px}
 .ttfail{color:#E8F0EC;text-align:center;padding:40px 16px;font-size:13px;line-height:2}
 .ttfail .btn{display:inline-block;text-decoration:none;margin-top:4px}
+</style>
+<style>
+.tabs{display:flex;gap:8px;flex-wrap:wrap;padding-block:6px 12px}
+.tabs .chip{font-size:19px;padding:7px 18px}
+#plan{padding-block:12px}
+.pctl{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pq{font-family:var(--f-head);font-weight:700;font-size:18px;letter-spacing:.03em}
+.prow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.pnote{margin:0;color:var(--muted);font-size:12px;max-width:70ch}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-block:18px 8px}
+.phead h2{font-family:var(--f-head);font-size:30px;margin:0}
+.plist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:16px;align-items:start}
+.pi{display:flex;flex-direction:column;gap:8px;min-width:0}
+.phd{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.phd .num{font:700 20px var(--f-head);background:var(--accent);color:var(--accent-ink);border-radius:50%;width:30px;height:30px;display:inline-grid;place-items:center;flex:none}
+.phd .role{flex:1;min-width:140px;font-size:12px;color:var(--muted)}
+.phd .rx{font:600 12px var(--f-body);background:var(--chip);border-radius:4px;padding:2px 8px;white-space:nowrap}
+.pi .pick{display:none}
+.swap{background:var(--card);border:1.5px solid var(--accent);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.swh{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}
+.swh .chip{font-size:14px;padding:2px 12px}
+.sws{font:700 15px var(--f-head);letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin-top:4px}
+.srow{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:8px;flex-wrap:wrap}
+.sinfo{flex:1 1 180px;min-width:0;font-size:13px;line-height:1.9}
+.sbtn{flex:none}
+.sen{color:var(--muted);font-size:11px;margin-right:4px}
+.sno{color:var(--muted);font-size:11px;margin-top:2px}
+.sbtn{display:flex;gap:10px;align-items:center}
+.sbtn a{color:var(--accent);font-size:12px}
+.tag.rec{background:var(--hot);color:#fff;font-weight:600}
 </style>
 <script>
 const EX=[];
@@ -632,4 +664,119 @@ document.addEventListener('click',ev=>{
 });
 $('#n').textContent=EX.length;
 renderBar();renderGrid();renderTray();
+/* ---------- Lên buổi tập ---------- */
+/* M[i] = [kiểu chuyển động, bậc (1 nặng/đa khớp, 2 vừa, 3 cô lập/bài kết), điểm ưu tiên 0-10 cho mục tiêu thon gọn, dễ học] */
+const M=[['vpull',1,9],['vpull',1,7],['hpull',1,9],['hpull',1,9],['hpull',2,5],['hpull',1,8],['latiso',3,7],['rdelt',3,8],['rdelt',3,8],['hpull',2,7],['hpull',2,6],['spine',3,7],['spine',3,8],['hinge',2,5],['hinge',1,6],
+['bridge',1,9],['bridge',2,7],['bridge',2,7],['hinge',1,9],['hinge',2,7],['lunge',1,8],['squat',2,7],['lunge',2,7],['lunge',2,8],['lunge',2,7],['kick',3,7],['hinge',2,5],['kick',3,7],['abd',3,6],['abd',3,6],['abd',3,7],['abd',3,7],['bridge',3,5],
+['squat',1,7],['squat',1,9],['squat',1,5],['squat',1,8],['squat',2,6],['lunge',2,8],['lunge',2,8],['quadiso',3,7],['hamiso',3,8],['hinge',2,7],['addu',3,6],['calf',3,6],['fin',3,5],['fin',3,6],
+['hpress',1,6],['hpress',1,9],['incline',1,9],['decline',2,5],['hpress',1,8],['fly',3,7],['fly',3,8],['fly',3,8],['pushup',2,7],['pushup',2,6],['pushup',2,7],['dip',2,5],['svend',3,5],['pullover',3,5]];
+const SLOTS={lung:['vpull','hpull','rdelt','hpull','latiso','spine','hinge','vpull'],
+ mong:['bridge','hinge','lunge','abd','kick','squat','bridge','abd'],
+ chan:['squat','lunge','hinge','hamiso','quadiso','calf','addu','fin'],
+ nguc:['hpress','incline','fly','pushup','pullover','dip','decline','svend']};
+const ORD={lung:['vpull','hpull','hinge','latiso','rdelt','spine'],mong:['bridge','hinge','lunge','squat','kick','abd'],
+ chan:['squat','lunge','hinge','hamiso','quadiso','addu','calf','fin'],nguc:['hpress','incline','decline','pushup','dip','fly','pullover','svend']};
+const REL={lung:{vpull:['hpull'],hpull:['vpull'],rdelt:['hpull'],latiso:['vpull'],hinge:['spine'],spine:['hinge']},
+ mong:{bridge:['kick','hinge'],hinge:['bridge'],lunge:['squat'],squat:['lunge'],kick:['bridge','abd'],abd:['kick']},
+ chan:{squat:['lunge'],lunge:['squat'],hinge:['hamiso'],hamiso:['hinge'],quadiso:['squat'],addu:['calf'],calf:['addu'],fin:['squat']},
+ nguc:{hpress:['incline','pushup'],incline:['hpress','pushup'],pushup:['hpress','incline'],fly:['pullover'],dip:['decline','hpress'],decline:['dip','hpress'],pullover:['fly'],svend:['fly']}};
+const ROLE={vpull:'Kéo dọc: tập xô, bài nền tảng của buổi lưng',hpull:'Kéo ngang: tập lưng giữa, giúp lưng phẳng và thẳng',rdelt:'Vai sau và cơ giữa lưng: giữ tư thế, gọn lưng',
+ latiso:'Cô lập xô: ép xô sau khi đã kéo nặng',hinge:'Gập hông: tập chuỗi cơ phía sau (mông, đùi sau, lưng dưới)',spine:'Lưng dưới: ổn định cột sống, tập nhẹ',
+ bridge:'Đẩy hông: bài hiệu quả nhất cho mông',lunge:'Bài một chân: đùi, mông và thăng bằng',squat:'Squat/đạp: bài nền tảng cho đùi và mông',kick:'Đá chân ra sau: cô lập mông',
+ abd:'Dạng chân: mông ngoài, ổn định hông',hamiso:'Cô lập đùi sau',quadiso:'Cô lập đùi trước',addu:'Đùi trong',calf:'Bắp chân',fin:'Bài kết: sức bền đùi, cardio nhẹ',
+ hpress:'Đẩy ngang: bài chính cho ngực',incline:'Đẩy dốc lên: ngực trên',decline:'Đẩy dốc xuống: ngực dưới',pushup:'Hít đất: ngực và thân, tập được tại nhà',
+ fly:'Ép ngực: cô lập, ngực săn',dip:'Dip: ngực dưới và tay sau',pullover:'Pullover: ngực và xô',svend:'Ép đĩa: ngực trong'};
+const RX_T={1:'3 hiệp × 8–12 lần',2:'3 hiệp × 10–12 lần',3:'2–3 hiệp × 12–15 lần'};
+const RX_X={12:'3 hiệp × 10 lần, giữ 2 giây',45:'3 hiệp × 10–12 lần',46:'3 hiệp × 30–45 giây'};
+const rx=i=>RX_X[i]||RX_T[M[i][1]];
+const GNAME={lung:'Lưng',mong:'Mông',chan:'Chân',nguc:'Ngực'};
+
+let mode='lib';
+let ps={g:'mong',n:5,home:false,ids:[],open:-1};
+try{const o=JSON.parse(localStorage.getItem('bt-plan')||'null');
+  if(o&&GNAME[o.g]&&Array.isArray(o.ids)&&o.ids.every(i=>EX[i]))ps=Object.assign(ps,o,{open:-1})}catch(_){}
+const savePlan=()=>{try{localStorage.setItem('bt-plan',JSON.stringify({g:ps.g,n:ps.n,home:ps.home,ids:ps.ids}))}catch(_){}};
+
+function genPlan(g,n,home){
+  const pool=EX.filter(e=>e.g===g&&(!home||e.home));
+  const best=(l)=>l.slice().sort((a,b)=>M[b.id][2]-M[a.id][2]||a.id-b.id);
+  const out=[];
+  for(const pat of SLOTS[g]){
+    if(out.length>=n)break;
+    const c=best(pool.filter(e=>M[e.id][0]===pat&&!out.includes(e.id)));
+    if(c.length)out.push(c[0].id);
+  }
+  if(out.length<n)for(const e of best(pool)){if(out.length>=n)break;if(!out.includes(e.id))out.push(e.id)}
+  const oi=i=>{const k=ORD[g].indexOf(M[i][0]);return k<0?99:k};
+  return out.sort((a,b)=>M[a][1]-M[b][1]||oi(a)-oi(b)||M[b][2]-M[a][2]);
+}
+function candidates(pos){
+  const cur=ps.ids[pos],pat=M[cur][0],rel=(REL[ps.g]||{})[pat]||[];
+  const pool=EX.filter(e=>e.g===ps.g&&!ps.ids.includes(e.id)&&(!ps.home||e.home));
+  const sc=(a,b)=>M[b.id][2]-M[a.id][2]||a.id-b.id;
+  const same=pool.filter(e=>M[e.id][0]===pat).sort(sc);
+  const near=pool.filter(e=>rel.includes(M[e.id][0])).sort(sc);
+  const rest=pool.filter(e=>!same.includes(e)&&!near.includes(e)).sort(sc);
+  return{rec:[...same,...near],rest};
+}
+const ttLink=e=>e.tt?ttUrl(e):'https://www.youtube.com/watch?v='+e.yt[0];
+
+function swapHTML(pos){
+  const {rec,rest}=candidates(pos),cur=EX[ps.ids[pos]];
+  const row=(e,r)=>`<div class="srow"><div class="sinfo"><b>${e.n}</b> <span class="sen">${e.en}</span>
+    <span class="tag">${e.eq}</span> ${e.home?'<span class="tag home">Tại nhà</span> ':''}${r?'<span class="tag rec">Recommend</span>':''}
+    <div class="sno">${ROLE[M[e.id][0]]} · ${rx(e.id)}</div></div>
+    <div class="sbtn"><a href="${ttLink(e)}" target="_blank" rel="noopener">Xem video</a><button class="btn spick" type="button" data-id="${e.id}" data-pos="${pos}">Chọn thay</button></div></div>`;
+  return`<div class="swap"><div class="swh">Đổi bài <b>${cur.n}</b> <button class="chip sclose" type="button">Đóng</button></div>
+  ${rec.length?`<div class="sws">Bài tương tự</div>${rec.map(e=>row(e,1)).join('')}`:''}
+  ${rest.length?`<div class="sws">Các bài khác của buổi ${GNAME[ps.g].toLowerCase()} chưa được chọn</div>${rest.map(e=>row(e,0)).join('')}`:''}
+  ${!rec.length&&!rest.length?'<p class="sno">Không còn bài nào khác phù hợp bộ lọc.</p>':''}</div>`;
+}
+function renderPlan(){
+  const sel=(attr,items,cur)=>items.map(([k,n])=>`<button class="chip" type="button" ${attr}="${k}" aria-pressed="${String(cur)===String(k)}">${n}</button>`).join('');
+  let h=`<div class="pctl">
+   <div class="pq">Hôm nay tập nhóm nào?</div><div class="prow">${sel('data-pg',Object.entries(GNAME),ps.g)}</div>
+   <div class="pq">Tập bao nhiêu bài?</div><div class="prow">${sel('data-pn',[3,4,5,6,7,8].map(x=>[x,x]),ps.n)}
+     <span class="sp"></span><button class="chip" type="button" id="phome" aria-pressed="${ps.home}">Chỉ bài tại nhà</button></div>
+   <div class="prow"><button class="btn" type="button" id="pgo">Lên danh sách</button></div>
+   <p class="pnote">Danh sách xếp theo nguyên tắc: bài nhiều khớp, tạ nặng làm trước khi còn sức, bài cô lập làm sau, và mỗi buổi phủ đủ các kiểu chuyển động chính của nhóm cơ. Kết quả luôn giống nhau với cùng lựa chọn, không xáo trộn.</p></div>`;
+  if(ps.ids.length){
+    h+=`<div class="phead"><h2>Buổi ${GNAME[ps.g]} · ${ps.ids.length} bài</h2><button class="btn ghost2" type="button" id="pcopy">Sao chép buổi tập</button></div>`;
+    if(ps.ids.length<ps.n)h+=`<p class="pnote">Chỉ có ${ps.ids.length} bài phù hợp bộ lọc hiện tại.</p>`;
+    h+='<div class="plist">'+ps.ids.map((id,pos)=>{const e=EX[id];
+      return`<div class="pi" data-pos="${pos}"><div class="phd"><span class="num">${pos+1}</span><span class="role">${ROLE[M[id][0]]}</span>
+        <span class="rx">${rx(id)}</span><button class="btn ghost2 swp" type="button" data-pos="${pos}" aria-expanded="${ps.open===pos}">Đổi bài</button></div>
+        ${cardHTML(e)}${ps.open===pos?swapHTML(pos):''}</div>`}).join('')+'</div>';
+  }
+  $('#plan').innerHTML=h;
+}
+function planText(){
+  return 'Buổi '+GNAME[ps.g]+' ('+ps.ids.length+' bài)\n'+ps.ids.map((id,i)=>{const e=EX[id];
+    return (i+1)+'. '+e.n+' ('+e.en+') - '+rx(id)+': '+ttLink(e)}).join('\n');
+}
+function renderMode(){
+  $('#tabs').innerHTML=[['lib','Thư viện bài tập'],['plan','Lên buổi tập']].map(([k,n])=>
+    `<button class="chip" type="button" data-m="${k}" aria-pressed="${mode===k}">${n}</button>`).join('');
+  $('#bar').hidden=$('#grid').hidden=mode!=='lib';
+  $('#plan').hidden=mode!=='plan';
+  if(mode==='plan')renderPlan();
+}
+document.addEventListener('click',ev=>{
+  const t=ev.target.closest('button');if(!t)return;
+  if(t.dataset.m){mode=t.dataset.m;renderMode();window.scrollTo(0,0)}
+  else if(t.dataset.pg){ps.g=t.dataset.pg;ps.open=-1;renderPlan()}
+  else if(t.dataset.pn){ps.n=+t.dataset.pn;renderPlan()}
+  else if(t.id==='phome'){ps.home=!ps.home;renderPlan()}
+  else if(t.id==='pgo'){ps.ids=genPlan(ps.g,ps.n,ps.home);ps.open=-1;savePlan();renderPlan();const l=$('.phead');if(l)l.scrollIntoView({block:'start',behavior:'smooth'})}
+  else if(t.classList.contains('swp')){const p=+t.dataset.pos;ps.open=ps.open===p?-1:p;renderPlan()}
+  else if(t.classList.contains('sclose')){ps.open=-1;renderPlan()}
+  else if(t.classList.contains('spick')){ps.ids[+t.dataset.pos]=+t.dataset.id;ps.open=-1;savePlan();renderPlan()}
+  else if(t.id==='pcopy'){
+    const txt=planText(),done=()=>{t.textContent='Đã sao chép';setTimeout(()=>t.textContent='Sao chép buổi tập',1600)};
+    const fb=()=>{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done()}catch(_){t.textContent='Hãy bôi đen và sao chép thủ công'}ta.remove()};
+    try{navigator.clipboard.writeText(txt).then(done,fb)}catch(_){fb()}
+  }
+});
+renderMode();
 </script></body></html>
